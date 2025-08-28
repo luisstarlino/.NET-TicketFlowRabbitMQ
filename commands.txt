@@ -1,0 +1,27 @@
+# --- Docker Compose Commands ---
+
+# --- Starts all services in the background.
+docker-compose up -d 
+
+# --- Stops containers but keeps data volumes.
+docker-compose down
+
+# --- Stops containers and removes all data volumes.
+docker-compose down --volumes
+
+# --- Shows real-time logs for all running services.
+docker-compose logs -f
+
+# --- .NET Commands ---
+
+# --- Creates a new ASP.NET Core Web API project.
+dotnet new webapi
+
+# --- Creates a new .NET Worker Service for background tasks.
+dotnet new worker
+
+# --- Adds the RabbitMQ client library to a project.
+dotnet add package RabbitMQ.Client
+
+# --- Runs a specific .NET project.
+dotnet run --project <ProjectName>
