@@ -18,7 +18,7 @@ namespace TicketFlowRabbitMQ.Order.Domain.Models
         public DateTime BirthDate { get; private set; }
 
         // --- Private Constructor to ensure that the only way to create it is using the factory.
-        public User() { }
+        private User() { }
 
         public static User Create(string name, string email, string password, string phone, int Age, string birthDate)
         {
