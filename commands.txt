@@ -25,3 +25,9 @@ dotnet add package RabbitMQ.Client
 
 # --- Runs a specific .NET project.
 dotnet run --project <ProjectName>
+
+# --- EF Run Migration
+dotnet ef migrations add <name> -c <ContextName>
+
+# --- EF Update DB
+dotnet ef database update 
