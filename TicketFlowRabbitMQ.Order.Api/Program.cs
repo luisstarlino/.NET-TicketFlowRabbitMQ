@@ -1,13 +1,23 @@
-using Microsoft.AspNetCore.Builder;
+using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
+using TicketFlowRabbitMQ.Order.Application.Interfaces;
+using TicketFlowRabbitMQ.Order.Application.Services;
+using TicketFlowRabbitMQ.Order.Data.Context;
+using TicketFlowRabbitMQ.Order.Data.Repository;
+using TicketFlowRabbitMQ.Order.Domain.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
+// ==== Add services to the container.
 builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
+
+// ==== DBContext
+builder.Services.AddDbContext<TicketFlowContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("TicketFlowDbConnection")));
+
+// ==== Mapping interfece X service
+builder.Services.AddScoped<IFlowRepository, FlowRepository>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 var app = builder.Build();
 
