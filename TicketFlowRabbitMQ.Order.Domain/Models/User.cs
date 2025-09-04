@@ -10,17 +10,17 @@ namespace TicketFlowRabbitMQ.Order.Domain.Models
 {
     public class User
     {
-        public Guid Id { get; private set; }
-        public string Name { get; private set; }
-        public string Email { get; private set; }
-        public string Password { get; private set; }
-        public string Phone { get; private set; }
-        public DateTime BirthDate { get; private set; }
+        public Guid Id { get; set; }
+        public string Name { get; set; }
+        public string Email { get; set; }
+        public string Password { get; set; }
+        public string Phone { get; set; }
+        public DateTime BirthDate { get; set; }
 
         // --- Private Constructor to ensure that the only way to create it is using the factory.
         private User() { }
 
-        public static User Create(string name, string email, string password, string phone, int Age, string birthDate)
+        public static User Create(string name, string email, string password, string phone, string birthDate)
         {
             string hash = String.Empty;
             DateTime.TryParseExact(birthDate, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime birthDateObj);

@@ -9,8 +9,13 @@ namespace TicketFlowRabbitMQ.Order.Domain.Interfaces
 {
     public interface IFlowRepository
     {
+        #region USER CRUD
+        Task<Guid> AddUserAsync(User user);
+        Task <User?> UpdateUserAsync(User user);
+        Task <User?> DeleteUserAsync(Guid idUser);
         Task<IEnumerable<User>> GetAllUsers();
-        Task<Guid> Add(User user);
-        Task<List<User>>? GetByMail(string mail);
+        Task<User?> GetUserByMail(string mail);
+        Task<User?> GetUserByIdAsync(Guid id);
+        #endregion
     }
 }
