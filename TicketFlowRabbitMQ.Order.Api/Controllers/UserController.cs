@@ -18,9 +18,16 @@ namespace TicketFlowRabbitMQ.Order.Api.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<User>>> GetAll()
         {
-            var users = await _service.GetAll();
-            if (!users.Any()) return NoContent();
-            return Ok(users);
+            try
+            {
+                var users = await _service.GetAll();
+                if (!users.Any()) return NoContent();
+                return Ok(users);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("Internal Server Error");
+            }
         }
 
     }
