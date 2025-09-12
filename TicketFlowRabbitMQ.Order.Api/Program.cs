@@ -34,4 +34,7 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+app.MapGet("/scalar/v1/test", () => "API rodando!");
+
+
 app.Run();
