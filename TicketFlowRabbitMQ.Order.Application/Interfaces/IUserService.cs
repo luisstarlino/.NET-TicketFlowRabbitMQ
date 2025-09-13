@@ -11,5 +11,7 @@ namespace TicketFlowRabbitMQ.Order.Application.Interfaces
     public interface IUserService
     {
         Task<IEnumerable<User>> GetAll();
+        Task<User?> GetUniqueUserById(Guid id);
+        Task<Guid> ProcessAndSaveNewUser(User model);
     }
 }

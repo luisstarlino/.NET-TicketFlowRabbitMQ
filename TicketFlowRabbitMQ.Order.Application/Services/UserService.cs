@@ -22,5 +22,15 @@ namespace TicketFlowRabbitMQ.Order.Application.Services
         {
             return await _repository.GetAllUsers();
         }
+
+        public async Task<User?> GetUniqueUserById(Guid id)
+        {
+            return await _repository.GetUserByIdAsync(id);
+        }
+
+        public async Task<Guid> ProcessAndSaveNewUser(User model)
+        {
+            return await _repository.AddUserAsync(model);
+        }
     }
 }

@@ -23,7 +23,7 @@ namespace TicketFlowRabbitMQ.Order.Domain.Models
         public static User Create(string name, string email, string password, string phone, string birthDate)
         {
             string hash = String.Empty;
-            DateTime.TryParseExact(birthDate, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime birthDateObj);
+            DateTime.TryParseExact(birthDate, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal, out DateTime birthDateObj);
             using (SHA256 sha = SHA256.Create())
             {
                 byte[] hashBytes = sha.ComputeHash(Encoding.UTF8.GetBytes(password));

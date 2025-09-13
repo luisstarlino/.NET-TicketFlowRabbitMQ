@@ -7,10 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="DTOs\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\TicketFlowRabbitMQ.Order.Domain\TicketFlowRabbitMQ.Order.Domain.csproj" />
   </ItemGroup>
 
