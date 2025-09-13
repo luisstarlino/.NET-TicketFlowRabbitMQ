@@ -7,9 +7,9 @@ services:
     hostname: rabbitmq
     ports:
       - "5672:5672"
-      - "15672:15672" # ADM interface
+      - "15672:15672"
     volumes:
-      - rabbitmq_data:/var/lib/rabbitmq # Persistence of RabbitMQ Data
+      - rabbitmq_data:/var/lib/rabbitmq
     environment:
       RABBITMQ_DEFAULT_USER: user
       RABBITMQ_DEFAULT_PASS: password
@@ -18,6 +18,8 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - ticketflow_network
 
   db:
     image: postgres:13
@@ -28,7 +30,7 @@ services:
       POSTGRES_PASSWORD: password
       POSTGRES_DB: ticketflow
     volumes:
-      - db_data:/var/lib/postgresql/data # Persistence of PostgreSQL Data
+      - db_data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
     healthcheck:
@@ -36,7 +38,13 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+    networks:
+      - ticketflow_network
 
 volumes:
   rabbitmq_data:
   db_data:
+
+networks:
+  ticketflow_network:
+    external: true
