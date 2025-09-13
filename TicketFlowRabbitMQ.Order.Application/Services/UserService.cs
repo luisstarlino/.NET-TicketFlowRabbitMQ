@@ -18,6 +18,11 @@ namespace TicketFlowRabbitMQ.Order.Application.Services
             _repository = repository;
         }
 
+        public async Task<User?> DeleteUser(User user)
+        {
+            return await _repository.DeleteUserAsync(user.Id);
+        }
+
         public async Task<IEnumerable<User>> GetAll()
         {
             return await _repository.GetAllUsers();

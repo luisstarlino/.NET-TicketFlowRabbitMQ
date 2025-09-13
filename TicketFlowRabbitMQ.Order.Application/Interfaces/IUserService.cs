@@ -13,6 +13,7 @@ namespace TicketFlowRabbitMQ.Order.Application.Interfaces
         Task<IEnumerable<User>> GetAll();
         Task<User?> GetUniqueUserById(Guid id);
         Task<User?> UpdateUser(User user);
+        Task<User?> DeleteUser(User user);
         Task<Guid> ProcessAndSaveNewUser(User model);
     }
 }

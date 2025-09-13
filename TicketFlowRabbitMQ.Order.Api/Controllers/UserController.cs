@@ -180,6 +180,52 @@ namespace TicketFlowRabbitMQ.Order.Api.Controllers
             }
         }
 
+        [HttpDelete("{id:guid}")]
+        public async Task<IActionResult> DeleteUser(Guid id)
+        {
+            try
+            {
+                //------------------------------------------------------------------------------------------------
+                // R1. Fetch current user
+                //------------------------------------------------------------------------------------------------
+                var user = await _service.GetUniqueUserById(id);
+                if (user == null) return NotFound("User not found!");
+
+                //------------------------------------------------------------------------------------------------
+                // R2. Delete the current user
+                //------------------------------------------------------------------------------------------------
+                var hasDeleted = await _service.DeleteUser(user);
+                if (hasDeleted is null) return BadRequest("Can't delete user right now");
+
+                //------------------------------------------------------------------------------------------------
+                // R3. Mapping
+                //------------------------------------------------------------------------------------------------
+                var response = new UserDTOResponse
+                {
+                    Id = id,
+                    Name = hasDeleted.Name,
+                    Email = hasDeleted.Email,
+                    Phone = hasDeleted.Phone,
+                    BirthDate = hasDeleted.BirthDate.ToString("dd/MM/yyyy")
+                };
+
+
+                return Ok(new
+                {
+                    message = "User Deleted",
+                    response
+                }); // 204, standard for delete
+            }
+            catch (Exception ex)
+            {
+                return Problem(
+                    detail: $"ERR05-Internal server error. Can't delete this user right now.{ex.Message[..150]}",
+                    statusCode: StatusCodes.Status500InternalServerError
+                );
+            }
+        }
+
+
 
 
     }
