@@ -32,5 +32,10 @@ namespace TicketFlowRabbitMQ.Order.Application.Services
         {
             return await _repository.AddUserAsync(model);
         }
+
+        public async Task<User?> UpdateUser(User user)
+        {
+            return await _repository.UpdateUserAsync(user);
+        }
     }
 }
