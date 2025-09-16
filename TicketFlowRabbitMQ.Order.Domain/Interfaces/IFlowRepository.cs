@@ -17,5 +17,12 @@ namespace TicketFlowRabbitMQ.Order.Domain.Interfaces
         Task<User?> GetUserByMail(string mail);
         Task<User?> GetUserByIdAsync(Guid id);
         #endregion
+
+        #region EVENTS CRUD
+        Task<Guid> AddEventAsync(Event @event);
+        Task <Event?> UpdateEventAsync(Event @event);
+        Task<Event?> DeleteEventAsync(Guid idEvent);
+        Task<IEnumerable<Event>> GetAllEvents();
+        #endregion
     }
 }

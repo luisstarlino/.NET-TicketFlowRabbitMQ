@@ -18,6 +18,8 @@ namespace TicketFlowRabbitMQ.Order.Data.Repository
         {
             _ctx = ctx;
         }
+
+        #region === USER
         async public Task<Guid> AddUserAsync(User user)
         {
             try
@@ -91,5 +93,78 @@ namespace TicketFlowRabbitMQ.Order.Data.Repository
         {
             return await _ctx.Users.Where(u => u.Email.Equals(mail)).FirstOrDefaultAsync() ?? null;
         }
+
+        #endregion
+
+        #region === EVENT
+        async public Task<Guid> AddEventAsync(Event @event)
+        {
+            try
+            {
+                await _ctx.Events.AddAsync(@event);
+                await _ctx.SaveChangesAsync();
+                return @event.Id;
+            }
+            catch (Exception ex)
+            {
+                return Guid.Empty;
+            }
+        }
+
+        async public Task<Event?> UpdateEventAsync(Event @event)
+        {
+            try
+            {
+                var eventToUpdate = await _ctx.Events.FindAsync(@event.Id);
+                if (eventToUpdate is null) return null;
+                else
+                {
+
+                    eventToUpdate.Title = String.IsNullOrWhiteSpace(@event.Title) ? eventToUpdate.Title : @event.Title;
+                    eventToUpdate.Description = String.IsNullOrWhiteSpace(@event.Description) ? eventToUpdate.Description : @event.Description;
+                    eventToUpdate.Location = String.IsNullOrWhiteSpace(@event.Location) ? eventToUpdate.Location : @event.Location;
+                    eventToUpdate.TicketPrice = @event.TicketPrice <= 0 ? eventToUpdate.TicketPrice : @event.TicketPrice;
+                    eventToUpdate.AvailableTickets = @event.AvailableTickets == default ? eventToUpdate.AvailableTickets : @event.AvailableTickets;
+                    eventToUpdate.Date = String.IsNullOrWhiteSpace(@event.Date.ToString()) ? eventToUpdate.Date : @event.Date;
+
+                    await _ctx.SaveChangesAsync();
+
+                    return eventToUpdate;
+                }
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        async public Task<Event?> DeleteEventAsync(Guid idEvent)
+        {
+            try
+            {
+                var eventToDelete = await _ctx.Events.FindAsync(idEvent);
+                if (eventToDelete != null)
+                {
+                    _ctx.Events.Remove(eventToDelete);
+                    await _ctx.SaveChangesAsync();
+
+                }
+                return eventToDelete;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        async public Task<IEnumerable<Event>> GetAllEvents()
+        {
+            var events = await _ctx.Events.ToListAsync();
+            return events;
+        }
+
+        #endregion
+
+
     }
 }
