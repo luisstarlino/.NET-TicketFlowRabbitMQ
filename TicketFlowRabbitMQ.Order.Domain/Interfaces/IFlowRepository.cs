@@ -23,6 +23,7 @@ namespace TicketFlowRabbitMQ.Order.Domain.Interfaces
         Task <Event?> UpdateEventAsync(Event @event);
         Task<Event?> DeleteEventAsync(Guid idEvent);
         Task<IEnumerable<Event>> GetAllEvents();
+        Task<Event?> GetEventByIdAsync(Guid id);
         #endregion
     }
 }

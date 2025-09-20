@@ -28,6 +28,11 @@ namespace TicketFlowRabbitMQ.Order.Application.Services
             return await _flowRepository.GetAllEvents();
         }
 
+        public async Task<Event?> GetUniqueEventById(Guid id)
+        {
+            return await _flowRepository.GetEventByIdAsync(id);
+        }
+
         async public Task<Guid> ProcessAndSaveNewEvent(Event @event)
         {
             return await _flowRepository.AddEventAsync(@event);

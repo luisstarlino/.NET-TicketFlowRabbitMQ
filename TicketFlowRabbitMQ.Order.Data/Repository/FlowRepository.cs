@@ -163,6 +163,11 @@ namespace TicketFlowRabbitMQ.Order.Data.Repository
             return events;
         }
 
+        async public Task<Event?> GetEventByIdAsync(Guid id)
+        {
+            return await _ctx.Events.FindAsync(id);
+        }
+
         #endregion
 
 

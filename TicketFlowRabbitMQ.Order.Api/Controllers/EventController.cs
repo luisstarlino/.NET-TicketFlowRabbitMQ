@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Globalization;
 using TicketFlowRabbitMQ.Order.Api.DTOs;
 using TicketFlowRabbitMQ.Order.Application.Interfaces;
 using TicketFlowRabbitMQ.Order.Domain.Helpers;
@@ -36,6 +37,11 @@ namespace TicketFlowRabbitMQ.Order.Api.Controllers
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<IActionResult> AddNewEvent([FromBody] EventDTO model)
         {
@@ -63,6 +69,95 @@ namespace TicketFlowRabbitMQ.Order.Api.Controllers
             {
                 return Problem(
                     detail: $"ERR05-Internal server error. Can't create this event right now.{ex.Message[..150]}",
+                    statusCode: StatusCodes.Status500InternalServerError
+                );
+            }
+        }
+
+        [HttpGet("{id:guid}")]
+        public async Task<IActionResult> GetEventByUUID(Guid id)
+        {
+
+            try
+            {
+                //------------------------------------------------------------------------------------------------
+                // R1. App Service
+                //------------------------------------------------------------------------------------------------
+                var eventDB = await _eventService.GetUniqueEventById(id);
+                if (eventDB is null ) return NotFound("Event not found!");
+
+                //------------------------------------------------------------------------------------------------
+                // R2. Return
+                //------------------------------------------------------------------------------------------------
+                return Ok(eventDB);
+            }
+            catch (Exception ex)
+            {
+                return Problem(
+                    detail: $"ERR05-Internal server error. Can't fetch event right now.{ex.Message[..150]}",
+                    statusCode: StatusCodes.Status500InternalServerError
+                );
+            }
+
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPut("{id:guid}")]
+        public async Task<IActionResult> UpdateUser(Guid id, [FromBody] UpdateEventDTO model)
+        {
+            try
+            {
+                //------------------------------------------------------------------------------------------------
+                // R1. Check all parameters
+                //------------------------------------------------------------------------------------------------
+                if (model is null) return BadRequest(StringHelper.MISSING_PARAMETERS);
+
+                //------------------------------------------------------------------------------------------------
+                // R2. Fetch current user
+                //------------------------------------------------------------------------------------------------
+                var existEvent = await _eventService.GetUniqueEventById(id);
+                if (existEvent == null) NotFound("Event not found!");
+
+                //------------------------------------------------------------------------------------------------
+                // R3. Update fields
+                //------------------------------------------------------------------------------------------------
+                existEvent!.Title = model.Title ?? existEvent.Title;
+                existEvent.Description = model.Description ?? existEvent.Description;
+                existEvent.Location = model.Location ?? existEvent.Location;
+
+                if (!model!.Date!.IsEmpty())
+                {
+                    DateTime.TryParseExact(
+                        model.Date,
+                        "dd/MM/yyyy",
+                        CultureInfo.InvariantCulture,
+                        DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal,
+                    out DateTime dateObj);
+
+                    existEvent.Date = dateObj;
+                }
+
+                //------------------------------------------------------------------------------------------------
+                // R3. Call App Service to update
+                //------------------------------------------------------------------------------------------------
+                var hasUpdated = await _eventService.UpdateEvent(existEvent);
+
+                if (hasUpdated is null) return BadRequest("Can't update user right now");
+
+                //------------------------------------------------------------------------------------------------
+                // R4. Mapping 
+                //------------------------------------------------------------------------------------------------
+                return Ok(hasUpdated);
+            }
+            catch (Exception ex)
+            {
+                return Problem(
+                    detail: $"ERR05-Internal server error. Can't update user right now.{ex.Message[..150]}",
                     statusCode: StatusCodes.Status500InternalServerError
                 );
             }

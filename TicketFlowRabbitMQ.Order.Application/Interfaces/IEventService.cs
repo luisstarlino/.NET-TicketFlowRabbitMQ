@@ -11,6 +11,7 @@ namespace TicketFlowRabbitMQ.Order.Application.Interfaces
     {
         Task<IEnumerable<Event>> GetAll();
         Task<Event?> UpdateEvent(Event @event);
+        Task<Event?> GetUniqueEventById(Guid id);
         Task<Event?> DeleteEvent(Event @event);
         Task<Guid> ProcessAndSaveNewEvent(Event @event);
     }
