@@ -17,6 +17,7 @@ builder.Services.AddDbContext<TicketFlowContext>(options => options.UseNpgsql(bu
 
 // ==== Mapping interfece X service
 builder.Services.AddScoped<IFlowRepository, FlowRepository>();
+builder.Services.AddScoped<IEventService, EventService>();
 builder.Services.AddScoped<IUserService, UserService>();
 
 var app = builder.Build();

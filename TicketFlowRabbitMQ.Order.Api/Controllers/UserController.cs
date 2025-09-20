@@ -79,7 +79,7 @@ namespace TicketFlowRabbitMQ.Order.Api.Controllers
             }
         }
 
-        [HttpGet("{id:guid}")] // Use a type constraint for UUIDs
+        [HttpGet("{id:guid}")]
         public async Task<IActionResult> GetUserByUUID(Guid id)
         {
 
