@@ -1,16 +1,25 @@
-stages:
-  - build
+name: Build .NET App
 
-variables:
-  DOTNET_CLI_TELEMETRY_OPTOUT: "1"
-  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: "1"
-  DOTNET_NOLOGO: "true"
+on:
+  pull_request:
+    branches:
+      - master
 
-build-job:
-  stage: build
-  image: mcr.microsoft.com/dotnet/sdk:9.0
-  script:
-    - dotnet restore
-    - dotnet build --configuration Release --no-restore
-  rules:
-    - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "master"'
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build --configuration Release --no-restore
