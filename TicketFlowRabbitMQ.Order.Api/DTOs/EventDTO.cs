@@ -17,4 +17,10 @@
         public string? Location { get; set; }
         public string? Date { get; set; }
     }
+
+    public class UpdateEventSalesInfoDTO
+    {
+        public decimal TicketPrice { get; set; }
+        public int AvailableTickets { get; set; }
+    }
 }

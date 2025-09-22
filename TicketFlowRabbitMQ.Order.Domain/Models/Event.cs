@@ -59,6 +59,16 @@ namespace TicketFlowRabbitMQ.Order.Domain.Models
             AvailableTickets -= quantity;
         }
 
+        // --- Update salesInfo
+        public void UpdateSalesInfo(decimal ticketPrice, int availableTickets)
+        {
+            if (ticketPrice <= 0) throw new ArgumentException("Ticket price must be greater than zero.");
+            if (availableTickets < 0) throw new ArgumentException("Available tickets cannot be negative.");
+
+            TicketPrice = ticketPrice;
+            AvailableTickets = availableTickets;
+        }
+
 
     }
 }

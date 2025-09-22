@@ -108,7 +108,7 @@ namespace TicketFlowRabbitMQ.Order.Api.Controllers
         /// <param name="model"></param>
         /// <returns></returns>
         [HttpPut("{id:guid}")]
-        public async Task<IActionResult> UpdateUser(Guid id, [FromBody] UpdateEventDTO model)
+        public async Task<IActionResult> UpdateEvent(Guid id, [FromBody] UpdateEventDTO model)
         {
             try
             {
@@ -118,10 +118,10 @@ namespace TicketFlowRabbitMQ.Order.Api.Controllers
                 if (model is null) return BadRequest(StringHelper.MISSING_PARAMETERS);
 
                 //------------------------------------------------------------------------------------------------
-                // R2. Fetch current user
+                // R2. Fetch current event
                 //------------------------------------------------------------------------------------------------
                 var existEvent = await _eventService.GetUniqueEventById(id);
-                if (existEvent == null) NotFound("Event not found!");
+                if (existEvent == null) return NotFound("Event not found!");
 
                 //------------------------------------------------------------------------------------------------
                 // R3. Update fields
@@ -157,10 +157,60 @@ namespace TicketFlowRabbitMQ.Order.Api.Controllers
             catch (Exception ex)
             {
                 return Problem(
-                    detail: $"ERR05-Internal server error. Can't update user right now.{ex.Message[..150]}",
+                    detail: $"ERR05-Internal server error. Can't update event right now.{ex.Message[..150]}",
                     statusCode: StatusCodes.Status500InternalServerError
                 );
             }
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPut("{id:guid}/sales-info")]
+        public async Task<IActionResult> UpdateSalesEventInfo(Guid id, [FromBody] UpdateEventSalesInfoDTO model)
+        {
+            try
+            {
+                //------------------------------------------------------------------------------------------------
+                // R1. Check all parameters
+                //------------------------------------------------------------------------------------------------
+                if (model is null) return BadRequest(StringHelper.MISSING_PARAMETERS);
+
+                //------------------------------------------------------------------------------------------------
+                // R2. Fetch current event
+                //------------------------------------------------------------------------------------------------
+                var existEvent = await _eventService.GetUniqueEventById(id);
+                if (existEvent == null) return NotFound("Event not found!");
+
+                //------------------------------------------------------------------------------------------------
+                // R3. Update fields
+                //------------------------------------------------------------------------------------------------
+                existEvent.UpdateSalesInfo(model.TicketPrice, model.AvailableTickets);
+
+                //------------------------------------------------------------------------------------------------
+                // R3. Call App Service to update
+                //------------------------------------------------------------------------------------------------
+                var hasUpdated = await _eventService.UpdateEvent(existEvent);
+
+                if (hasUpdated is null) return BadRequest("Can't update event right now");
+
+                //------------------------------------------------------------------------------------------------
+                // R4. Mapping 
+                //------------------------------------------------------------------------------------------------
+                return Ok(hasUpdated);
+            }
+            catch (Exception ex)
+            {
+                return Problem(
+                    detail: $"ERR05-Internal server error. Can't update event price right now.{ex.Message[..150]}",
+                    statusCode: StatusCodes.Status500InternalServerError
+                );
+            }
+        }
+
+
     }
 }
