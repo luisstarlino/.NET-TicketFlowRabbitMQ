@@ -21,7 +21,7 @@ namespace TicketFlowRabbitMQ.Order.Domain.Models
         // --- Private Constructor to ensure that the only way to create it is using the factory.
         private Order() { }
 
-        public static Order Create(Guid userId, Guid eventId, int  quantity, decimal totalPrice)
+        public static Order     Create(Guid userId, Guid eventId, int  quantity, decimal totalPrice)
         {
             var id = Guid.NewGuid();
             var createdAt = DateTime.UtcNow;
