@@ -37,15 +37,19 @@ namespace TicketFlowRabbitMQ.Order.Api.Controllers
                 );
 
                 //------------------------------------------------------------------------------------------------
-                // R3. Call App Service and create new user
+                // R3. Call App Service and create new user and send to RabbitMQ QUEUE
                 //------------------------------------------------------------------------------------------------
                 var orderObj = await _orderService.CreateNewOrderProcessing(newUser);
                 if(orderObj.Id.Equals(Guid.Empty)) return BadRequest("ERR03-We can't create the order right now. Try Again Later");
 
                 //------------------------------------------------------------------------------------------------
-                // R4. Send to rabbitMQ QEUE
+                // R4. User Response
                 //------------------------------------------------------------------------------------------------
-
+                return Accepted(new
+                {
+                    orderId = orderObj.Id,
+                    message = "Order received and is being processed asynchronously."
+                });
 
             }
             catch (Exception ex)

@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -167,11 +168,77 @@ namespace TicketFlowRabbitMQ.Order.Data.Repository
         {
             return await _ctx.Events.FindAsync(id);
         }
-
         #endregion
 
         #region === ORDER
+        async public Task<IEnumerable<Domain.Models.Order>> GetAllOrders()
+        {
+            var orders = await _ctx.Orders.ToListAsync();
+            return orders;
+        }
 
+        async public Task<Domain.Models.Order> AddOrderAsync(Domain.Models.Order m)
+        {
+            try
+            {
+                //------------------------------------------------------------------------------------------------
+                // R1. New Order Flow Transaction
+                //     * 1.1 Add a new order
+                //     * 1.2 Update Event Avalable Tickets 
+                //------------------------------------------------------------------------------------------------
+
+                //------------------------------------------------------------------------------------------------
+                // 1.1
+                //------------------------------------------------------------------------------------------------
+                await _ctx.Orders.AddAsync(m);
+
+                //------------------------------------------------------------------------------------------------
+                // 1.2
+                //------------------------------------------------------------------------------------------------
+                var eventTIcketsUpdate = await _ctx.Events.FindAsync(m.EventId);
+                eventTIcketsUpdate!.AvailableTickets -= m.Quantity;
+
+                //------------------------------------------------------------------------------------------------
+                // R2. Save Changes
+                //------------------------------------------------------------------------------------------------
+                await _ctx.SaveChangesAsync();
+
+                return m;
+            }
+            catch (Exception ex)
+            {
+                return Domain.Models.Order.Create(Guid.Empty, Guid.Empty, 0,0);
+            }
+        }
+
+        async public Task<Domain.Models.Order?> UpdateOrderAsync(Domain.Models.Order m)
+        {
+            try
+            {
+                var orderToUpdate = await _ctx.Orders.FindAsync(m.Id);
+                if (orderToUpdate is null) return null;
+                else
+                {
+
+                    orderToUpdate.Quantity = m.Quantity > 0 ? m.Quantity : orderToUpdate.Quantity;
+                    orderToUpdate.TotalPrice = m.TotalPrice > 0 ? m.TotalPrice : orderToUpdate.TotalPrice;
+                    orderToUpdate.Status = m.Status;
+                    
+                    await _ctx.SaveChangesAsync();
+
+                    return orderToUpdate;
+                }
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        public async Task<Domain.Models.Order?> GetOrderByIdAsync(Guid id)
+        {
+            return await _ctx.Orders.FindAsync(id) ?? null;
+        }
         #endregion
 
     }

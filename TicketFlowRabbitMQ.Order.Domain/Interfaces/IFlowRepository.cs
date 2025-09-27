@@ -29,8 +29,8 @@ namespace TicketFlowRabbitMQ.Order.Domain.Interfaces
         #region ORDER CRUD
         Task<IEnumerable<Models.Order>> GetAllOrders();
         Task<Models.Order> AddOrderAsync(Models.Order m);
-        Task<Models.Order> UpdateOrderAsync(Models.Order m);
-        Task<Models.Order> GetOrderByIdAsync(Guid id);
+        Task<Models.Order?> UpdateOrderAsync(Models.Order m);
+        Task<Models.Order?> GetOrderByIdAsync(Guid id);
         #endregion
 
 

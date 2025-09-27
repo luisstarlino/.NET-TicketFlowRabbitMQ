@@ -13,9 +13,9 @@ namespace TicketFlowRabbitMQ.Order.Domain.Models
         public string OrderNumber { get; private set; } // --- Identification for the users
         public Guid UserId { get; private set; }
         public Guid EventId { get; private set; }
-        public int Quantity { get; private set; }
-        public decimal TotalPrice { get; private set; }
-        public OrderStatus Status { get; private set; }
+        public int Quantity { get; set; }
+        public decimal TotalPrice { get; set; }
+        public OrderStatus Status { get; set; }
         public DateTime CreatedAt { get; private set; }
 
         // --- Private Constructor to ensure that the only way to create it is using the factory.
