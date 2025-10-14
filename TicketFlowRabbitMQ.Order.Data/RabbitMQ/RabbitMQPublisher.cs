@@ -20,9 +20,10 @@ public class RabbitMQPublisher : IEventBus
         var eventName = @event.GetType().Name;
         var factory = new ConnectionFactory
         {
-            HostName = "localhost",
-            UserName = "guest",
-            Password = "guest",
+            HostName = "rabbitmq",
+            Port = 5672,
+            UserName = "user",
+            Password = "password",
         };
 
         using var connection = await factory.CreateConnectionAsync();

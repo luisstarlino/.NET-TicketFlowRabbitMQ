@@ -1,3 +1,5 @@
+using Data.RabbitMQ; // <- onde está o RabbitMQPublisher
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 using TicketFlowRabbitMQ.Order.Application.Interfaces;
@@ -13,16 +15,20 @@ builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 
 // ==== DBContext
-builder.Services.AddDbContext<TicketFlowContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("TicketFlowDbConnection")));
+builder.Services.AddDbContext<TicketFlowContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("TicketFlowDbConnection")));
 
-// ==== Mapping interfece X service
+// ==== Repositórios e Serviços
 builder.Services.AddScoped<IFlowRepository, FlowRepository>();
 builder.Services.AddScoped<IEventService, EventService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IOrderService, OrderService>();
+
+// ==== RabbitMQ
+builder.Services.AddSingleton<IEventBus, RabbitMQPublisher>();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
@@ -30,12 +36,13 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
 app.UseAuthorization();
-
 app.MapControllers();
-
 app.MapGet("/scalar/v1/test", () => "API rodando!");
+app.MapGet("/test-di", ([FromServices] IOrderService service) =>
+{
+    return Results.Ok($"Service injetado: {service.GetType().FullName}");
+});
 
 
 app.Run();
