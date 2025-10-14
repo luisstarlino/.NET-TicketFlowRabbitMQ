@@ -19,7 +19,7 @@ services:
       timeout: 5s
       retries: 5
     networks:
-      - ticketflow_network
+      - ticketflow-net
 
   db:
     image: postgres:13
@@ -34,17 +34,38 @@ services:
     ports:
       - "5432:5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: ["CMD-SHELL", "pg_isready -U user"]
       interval: 5s
       timeout: 5s
       retries: 5
     networks:
-      - ticketflow_network
+      - ticketflow-net
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: api-ticketflow
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      db:
+        condition: service_healthy
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
+      ConnectionStrings__DefaultConnection: "Host=db;Database=ticketflow;Username=user;Password=password"
+      RabbitMQ__HostName: "rabbitmq"
+      RabbitMQ__UserName: "user"
+      RabbitMQ__Password: "password"
+    ports:
+      - "8080:8080"
+    networks:
+      - ticketflow-net
 
 volumes:
   rabbitmq_data:
   db_data:
 
 networks:
-  ticketflow_network:
-    external: true
+  ticketflow-net:
+    driver: bridge
